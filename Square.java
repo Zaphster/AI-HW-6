@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hw6;
+package ai_hw6_csb5h4;
 
 /**
  *
@@ -44,7 +44,13 @@ public class Square {
         this.y = y;
     }
     
-    public void setIsShaded(Boolean isShaded){
+    public void setIsShaded(Boolean isShaded) throws Exception{
+        if(constraint != null){
+            throw new Exception("Square " + this.getCoords() + " has a constraint and cannot be shaded.");
+        }
+        if(this.isShaded && isShaded){
+            throw new Exception("Square " + this.getCoords() + " is already shaded and cannot be shaded again.");
+        }
         this.isShaded = isShaded;
     }
     
@@ -52,7 +58,7 @@ public class Square {
         return isShaded;
     }
     
-    public void setConstraint(int constraint){
+    public void setConstraint(Integer constraint){
         this.constraint = constraint;
     }
     
