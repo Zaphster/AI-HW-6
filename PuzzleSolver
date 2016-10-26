@@ -1,0 +1,56 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package ai_hw6_csb5h4;
+
+import java.util.ArrayDeque;
+import java.util.Arrays;
+
+/**
+ *
+ * @author Cameron
+ */
+public class PuzzleSolver {
+    public Grid startingGrid;
+    public Grid solvedGrid;
+    public int numNodesExpanded;
+    private ArrayDeque fringe;
+    
+    
+    public PuzzleSolver(Grid grid){
+        startingGrid = grid;
+        solvedGrid = null;
+    }
+    
+    public Boolean solve(){
+        numNodesExpanded = 0;
+        return solve(startingGrid);
+    }
+    
+    private Boolean solve(Grid grid){
+        //check grid for solution
+        if(Grid.checkComplete(grid)){
+            solvedGrid = grid;
+            return true;
+        }
+        //pick a column.  find one with fewest legal remaining values
+        int[] columns = grid.getColumnsMRV();
+        System.out.println(Arrays.toString(columns));
+        if(columns[0] == -1){
+            //indicates no remaining values for the variable
+            return false;
+        }
+        if(columns.length > 1){
+            //need a tiebreaker. use degree heuristic
+            
+        }
+        return false;
+        //return solve();
+    }
+    
+    public void setGrid(Grid grid){
+        startingGrid = grid;
+    }
+}
