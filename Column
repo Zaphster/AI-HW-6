@@ -1,0 +1,69 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package ai_hw6_csb5h4;
+
+/**
+ *
+ * @author Cameron
+ */
+public class Column {
+    public int id;
+    public int size;
+    public int[] remainingValues;
+    public int numRemainingValues;
+    public int assignment;
+    public Boolean assigned;
+    
+    public Column(int id, int size, int[] remainingValues){
+        this.id = id;
+        this.size = size;
+        this.remainingValues = new int[size];
+        assigned = false;
+        System.arraycopy(remainingValues, 0, this.remainingValues, 0, remainingValues.length);
+        countRemainingValues();
+    }
+    
+    public int countRemainingValues(){
+        int count = 0;
+        for(int i = 0; i < remainingValues.length; i++){
+            if(remainingValues[i] > 0){
+                count++;
+            }
+        }
+        numRemainingValues = count;
+        return count;
+    }
+    
+    public void makeAssignment(int assignment) throws Exception{
+        Boolean assignmentValid = false;
+        if(assigned){
+            throw new Exception("Assignment " + assignment + " cannot be made to column " + id + ". This column already has assignment " + this.assignment);
+        }
+        for(int i = 0; i < size; i++){
+            if(assignment == remainingValues[i]){
+                assignmentValid = true;
+            }
+        }
+        if(!assignmentValid){
+            throw new Exception("Assignment " + assignment + " cannot be made to column " + id + ". Assignment is not in the list of valid assignments.");
+        }
+        this.assignment = assignment;
+        assigned = true;
+        remainingValues = new int[size];
+        remainingValues[0] = assignment;
+    }
+    
+    public void removeRemainingValues(int[] toRemove){
+        for(int i = 0; i < toRemove.length; i++){
+            for(int j = 0; j < remainingValues.length; j++){
+                if(toRemove[i] == remainingValues[j]){
+                    remainingValues[j] = 0;
+                }
+            }
+        }
+        countRemainingValues();
+    }
+}
