@@ -5,6 +5,8 @@
  */
 package ai_hw6_csb5h4;
 
+import java.util.Arrays;
+
 /**
  *
  * @author Cameron
@@ -26,6 +28,7 @@ public class Column {
         countRemainingValues();
     }
     
+    //used for MRV with variables.  finds how many values are in the domain
     public int countRemainingValues(){
         int count = 0;
         for(int i = 0; i < remainingValues.length; i++){
@@ -33,10 +36,12 @@ public class Column {
                 count++;
             }
         }
+//        System.out.println("Array " + Arrays.toString(remainingValues) + " has " + count + " remaining values");
         numRemainingValues = count;
         return count;
     }
     
+    //checks for some constraints.  if constraints are met, then this variable is assigned the value
     public void makeAssignment(int assignment) throws Exception{
         Boolean assignmentValid = false;
         if(assigned){
@@ -56,6 +61,7 @@ public class Column {
         remainingValues[0] = assignment;
     }
     
+    //takes values out of the domain
     public void removeRemainingValues(int[] toRemove){
         for(int i = 0; i < toRemove.length; i++){
             for(int j = 0; j < remainingValues.length; j++){
@@ -65,5 +71,15 @@ public class Column {
             }
         }
         countRemainingValues();
+    }
+    
+    //finds the next value in the domain to try
+    public int getNextValidAssignment(){
+        for(int i = 0; i < remainingValues.length; i++){
+            if(remainingValues[i] > 0){
+                return remainingValues[i];
+            }
+        }
+        return -1;
     }
 }
