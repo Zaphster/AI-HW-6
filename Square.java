@@ -15,6 +15,7 @@ public class Square {
     private Boolean isShaded;
     private Integer constraint;
     
+    //initialize a square in the puzzle
     public Square(int x, int y){
         this.x = x;
         this.y = y;
@@ -44,6 +45,7 @@ public class Square {
         this.y = y;
     }
     
+    //attempt to shade a square.  it cannot be shaded if it is already shaded or if it has a constraint value
     public void setIsShaded(Boolean isShaded) throws Exception{
         if(constraint != null){
             throw new Exception("Square " + this.getCoords() + " has a constraint and cannot be shaded.");
