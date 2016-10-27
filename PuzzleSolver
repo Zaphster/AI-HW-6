@@ -17,6 +17,7 @@ public class PuzzleSolver {
     public Grid solvedGrid;
     public int numNodesExpanded;
     private ArrayDeque fringe;
+    Boolean failure;
     
     
     public PuzzleSolver(Grid grid){
@@ -24,30 +25,70 @@ public class PuzzleSolver {
         solvedGrid = null;
     }
     
-    public Boolean solve(){
+    public int[] solve() throws Exception{
         numNodesExpanded = 0;
-        return solve(startingGrid);
+        failure = true;
+        int[] assignments = new int[startingGrid.numColumns];
+        return solve(startingGrid, assignments);
     }
     
-    private Boolean solve(Grid grid){
-        //check grid for solution
-        if(Grid.checkComplete(grid)){
-            solvedGrid = grid;
-            return true;
+    private int[] solve(Grid grid, int[] assignments) throws Exception{
+        numNodesExpanded++;
+        Grid workingGrid = Grid.copyGrid(grid);
+        Boolean valuesConsistent = true;
+        //apply previous assignments to this working grid.  if the assignment doesn't work, return failure
+        for(int i = 0; i < assignments.length; i++){
+            if(assignments[i] > 0){
+                try{
+                    if(workingGrid.columnAssignments[i + 1].assigned == false){
+                        //shadeSquare automatically removes valid values from the domain of the appropriate variables
+                        //this is the forward checking
+                        workingGrid.shadeSquare(i + 1, assignments[i]);
+                    }
+                }catch(Exception e){
+                    valuesConsistent = false;
+                    //System.out.println(e.getMessage());
+                }
+            }
         }
-        //pick a column.  find one with fewest legal remaining values
-        int[] columns = grid.getColumnsMRV();
-        System.out.println(Arrays.toString(columns));
-        if(columns[0] == -1){
-            //indicates no remaining values for the variable
-            return false;
+        //System.out.println("Working grid");
+        //Grid.printGrid(workingGrid);
+        if(valuesConsistent){
+            //check grid for solution
+            if(Grid.checkComplete(workingGrid)){
+                //System.out.println("Success");
+                solvedGrid = workingGrid;
+                failure = false;
+                return assignments;
+            }
+            //pick a variable that hasn't been assigned yet based on MRV and degree heuristic
+            int var = workingGrid.getUnassignedVar();
+            if(var == -1){
+                int[] fail = new int[1];
+                fail[0] = -1;
+                return fail;
+            }
+            //System.out.println("Chosen variable: " + var);
+            //get the domain of the variable
+            int[] domain = workingGrid.getDomain(var);
+            //System.out.println("Domain of " + var + ": " + Arrays.toString(domain));
+            //for each in the domain
+            for(int i = 0; i < domain.length; i++){
+                //assign the value
+                assignments[var - 1] = domain[i];
+                int[] result = solve(grid, assignments);
+                if(result[0] != -1){
+                    return result;
+                }
+                assignments[var - 1] = 0;
+
+            }
+        } else {
+            //System.out.println("Values not consistent");
         }
-        if(columns.length > 1){
-            //need a tiebreaker. use degree heuristic
-            
-        }
-        return false;
-        //return solve();
+        int[] fail = new int[1];
+        fail[0] = -1;
+        return fail;
     }
     
     public void setGrid(Grid grid){
